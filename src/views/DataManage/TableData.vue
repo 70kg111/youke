@@ -3,7 +3,7 @@
         <!--搜索栏-->
         <div class="search-box">
             <el-input size="small" v-model="searchVal" placeholder="请输入课程名称"></el-input>
-            <el-button size="small" type="primary" icon="el-icon-search">搜索</el-button>
+            <el-button size="small" type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
         </div>
 
         <!--展示页-->
@@ -23,7 +23,9 @@
         </el-table>
 
         <div class="pages" ref="page-box">
-            <el-pagination :page-sizes="[5,10,20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper" :total="total">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :page-sizes="[5,10,20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper"
+                           :total="total">
 
             </el-pagination>
         </div>
@@ -45,10 +47,6 @@
     @Provide() size: number = 5;     //请求数据的个数，默认5
     @Provide() total: number = 0;    //总数据条数
 
-    created() {
-      console.log(this.loadData());
-    }
-
     loadData() {
       (this as any).$axios(`/api/profiles/loadMore/${this.page}/${this.size}`)
         .then((res: any) => {
@@ -59,6 +57,34 @@
         .catch((err: any) => {
           console.log(err);
         });
+    }
+
+    handleSizeChange(val: number) {
+      this.size = val;
+      this.page = 1;
+      this.searchVal ? this.loadSearchData() : this.loadData();
+    }
+
+    handleCurrentChange(val: number) {
+      this.page = val;
+      this.searchVal ? this.loadSearchData() : this.loadData();
+    }
+
+    loadSearchData() {
+      //加载搜索数据
+      (this as any).$axios(`/api/profiles/search/${this.searchVal}/${this.page}/${this.size}`)
+        .then((res: any) => {
+          this.tableData = res.data.datas.list;
+          this.total = res.data.datas.total;
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    }
+
+    handleSearch() {
+      this.page = 1;
+      this.searchVal ? this.loadSearchData() : this.loadData();
     }
 
   };
