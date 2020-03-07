@@ -3,15 +3,21 @@
         <!-- 导航 -->
         <LayoutHeader></LayoutHeader>
         <!-- 内容 -->
+        <Content>
+            <Sidebar slot="left"></Sidebar>
+            <router-view slot="content"></router-view>
+        </Content>
     </div>
 </template>
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
   import LayoutHeader from '@/views/Layout/LayoutHeader.vue';
+  import Content from '@/views/Layout/Content.vue';
+  import Sidebar from '@/views/Layout/Sidebar.vue';
 
   @Component({
-    components:{LayoutHeader}
+    components:{Sidebar, Content, LayoutHeader}
   })
   export default class Layout extends Vue{
 
