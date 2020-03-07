@@ -40,12 +40,8 @@
         localStorage.removeItem('tsToken');
         this.$router.push('/login');
       } else if (command == 'usercenter') {
-        console.log('个人中心')
+        this.$router.push('/user')
       }
-    }
-
-    created() {
-      console.log(this.getUser);
     }
   };
 </script>

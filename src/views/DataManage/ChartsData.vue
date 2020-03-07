@@ -1,10 +1,15 @@
 <template>
-    $END$
+    <div>ChartsData</div>
 </template>
 
-<script lang="js">
-  export default {
-    name: 'ChartsData'
+<script lang="ts">
+  import {Component, Vue} from 'vue-property-decorator';
+
+  @Component({
+    components:{}
+  })
+  export default class ChartsData extends Vue{
+
   };
 </script>
 

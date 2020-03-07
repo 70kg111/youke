@@ -1,10 +1,15 @@
 <template>
-    $END$
+    <div>FormData</div>
 </template>
 
-<script lang="js">
-  export default {
-    name: 'FormData'
+<script lang="ts">
+  import {Component, Vue} from 'vue-property-decorator';
+
+  @Component({
+    components:{}
+  })
+  export default class FormData extends Vue{
+
   };
 </script>
 

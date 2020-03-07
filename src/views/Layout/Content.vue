@@ -11,9 +11,9 @@
             <div class="top">
                 <i class="fa fa-reorder"></i>
                 <el-breadcrumb class="breadcrumb" separator="/">
-                    <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+                    <el-breadcrumb-item v-for="(item,index) in breadCrumbItems" :key="index" :to="{path:item.path}">
+                        {{item.title}}
+                    </el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
             <!-- 页面内容-->
@@ -25,23 +25,50 @@
 </template>
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
+  import {Component, Vue, Provide, Watch} from 'vue-property-decorator';
 
   @Component({
-    components:{}
+    components: {}
   })
-  export default class Content extends Vue{
+  export default class Content extends Vue {
+    @Provide() breadCrumbItems: any;    //面包屑数组
 
+    @Watch('$route') handleRouteChange(to: any) {
+      this.initBreadCrumbItems(to);
+    }
+
+    created() {
+      this.initBreadCrumbItems(this.$route);
+    }
+
+    initBreadCrumbItems(router: any) {
+      //跟路由title
+      let breadCrumbItems = [{path: '/', title: '后台管理系统'}];
+      //遍历根路由到当前子路由页面的title和path，存储到数组里面
+      for (const index in router.matched) {
+        if (router.matched[index].meta && router.matched[index].meta.title) {
+          breadCrumbItems.push({
+            path: router.matched[index].path ? router.matched[index].path : '/',
+            title: router.matched[index].meta.title
+          });
+        }
+      }
+
+      this.breadCrumbItems = breadCrumbItems;
+
+      //console.log(this.breadCrumbItems);
+    }
   };
 </script>
-
 
 <style lang="scss" scoped>
     .layout-content {
         width: 100%;
         height: 100%;
+
         .el-main {
             padding: 0;
+
             .top {
                 background: #fff;
                 height: 54px;
@@ -49,15 +76,18 @@
                 border-bottom: 1px solid #e6e6e6;
                 display: flex;
                 align-items: center;
+
                 i {
                     font-size: 20px;
                     cursor: pointer;
                     padding-left: 16px;
                 }
+
                 .breadcrumb {
                     padding-left: 16px;
                 }
             }
+
             .content {
                 padding: 10px;
                 height: calc(100% - 54px);
