@@ -65,7 +65,6 @@
       type: [{required: true, message: '请选择技术栈', trigger: 'change'}],
     };
 
-
     submitForm(formName: string) {
       (this as any).$refs[formName].validate((valid: boolean) => {
         if (valid) {
