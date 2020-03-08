@@ -15,8 +15,8 @@
             <el-table-column label="报名人数" prop="count" width="120"></el-table-column>
             <el-table-column label="上线日期" prop="date" width="160"></el-table-column>
             <el-table-column label="操作" width="160">
-                <template>
-                    <el-button size="mini">编辑</el-button>
+                <template slot-scope="scope">
+                    <el-button @click="handleEdit(scope.$index,scope.row)" size="mini">编辑</el-button>
                     <el-button size="mini" type="danger">删除</el-button>
                 </template>
             </el-table-column>
@@ -26,18 +26,20 @@
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                            :page-sizes="[5,10,20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper"
                            :total="total">
-
             </el-pagination>
         </div>
+
+        <EditDialog :dialogVisible="dialogVisible" :formData="formData"></EditDialog>
 
     </div>
 </template>
 
 <script lang="ts">
   import {Component, Vue, Provide} from 'vue-property-decorator';
+  import EditDialog from '@/views/DataManage/EditDialog.vue';
 
   @Component({
-    components: {}
+    components: {EditDialog}
   })
   export default class TableData extends Vue {
     @Provide() searchVal: string = '';  //搜索框
@@ -46,6 +48,25 @@
     @Provide() page: number = 1;    //当前page
     @Provide() size: number = 5;     //请求数据的个数，默认5
     @Provide() total: number = 0;    //总数据条数
+
+    @Provide() dialogVisible: boolean = false;
+    @Provide() formData: object = {
+      title: '',
+      type: '',
+      level: '',
+      count: '',
+      date: '',
+    };
+
+    //编辑页面
+    handleEdit(index: number, row: any) {
+      this.formData = row;
+      this.dialogVisible = true;
+    }
+
+    created(){
+      this.loadData()
+    }
 
     loadData() {
       (this as any).$axios(`/api/profiles/loadMore/${this.page}/${this.size}`)
