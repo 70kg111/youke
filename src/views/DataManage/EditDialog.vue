@@ -67,10 +67,6 @@
       type: [{required: true, message: '请选择技术栈', trigger: 'change'}],
     };
 
-    created() {
-      console.log(this.dialogVisible, this.formData);
-    }
-
     submitForm(formName: any) {
       (this.$refs[formName] as any).validate((valid: boolean) => {
         if (valid) {

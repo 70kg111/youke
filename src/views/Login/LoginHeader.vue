@@ -4,10 +4,10 @@
             <div class="info">
                 <div class="title">
                     <img src="@/assets/logo.png" alt="">
-                    <span>米修在线</span>
+                    <span>有课在线</span>
                 </div>
                 <div class="detail">
-                    <span>让每个人都快乐的去学习</span>
+                    <span>Do you want power?</span>
                 </div>
             </div>
             <!-- 插槽 -->

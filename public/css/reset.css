@@ -24,6 +24,22 @@ time, mark, audio, video {
     vertical-align: baseline;
 }
 
+html {
+    overflow-y: scroll;
+}
+:root {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+:root body {
+    position: absolute;
+}
+body {
+    width: 100vw;
+    height: 100%;
+    overflow: hidden;
+}
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {

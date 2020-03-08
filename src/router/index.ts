@@ -4,6 +4,7 @@ import Layout from '@/views/Layout/index.vue';
 import Login from '@/views/Login/Login.vue';
 import Password from '@/views/Login/Password.vue';
 import TableData from '@/views/DataManage/TableData.vue';
+import jwt_decode from 'jwt-decode';
 
 Vue.use(VueRouter);
 
@@ -45,22 +46,22 @@ export const asyncRouterMap = [
     name: 'dataManage',
     component: Layout,
     hidden: true,
-    meta:{
-      title:'数据管理',
-      icon:'fa fa-database'
+    meta: {
+      title: '数据管理',
+      icon: 'fa fa-database'
     },
     redirect: '/tableData',
     children: [
       {
         path: '/tableData',
         name: 'tableData',
-        meta: { title: '表格管理', icon: 'fa fa-table' },
+        meta: {title: '表格管理', icon: 'fa fa-table'},
         component: () => import('@/views/DataManage/TableData.vue')
       },
       {
         path: '/chartsData',
         name: 'chartsData',
-        meta: { title: '图表管理', icon: 'fa fa-bar-chart' },
+        meta: {title: '图表管理', icon: 'fa fa-bar-chart'},
         component: () => import('@/views/DataManage/ChartsData.vue')
       },
       {
@@ -86,9 +87,10 @@ export const asyncRouterMap = [
       {
         path: '/accountData',
         name: 'accountData',
-        meta:{
-          title:'账户管理',
-          icon:'fa fa-user-plus'
+        meta: {
+          title: '账户管理',
+          icon: 'fa fa-user-plus',
+          roles: ['admin']
         },
         component: () => import('@/views/UserManage/AccountData.vue')
       }
@@ -104,8 +106,8 @@ export const asyncRouterMap = [
       {
         path: '/userInfo',
         name: 'userInfo',
-        meta:{
-          title:'个人中心',
+        meta: {
+          title: '个人中心',
         },
         component: () => import('@/views/UserManage/UserInfo.vue')
       }
@@ -116,8 +118,8 @@ export const asyncRouterMap = [
     path: '/404',
     name: '404',
     hidden: false,
-    meta:{
-      title:'404',
+    meta: {
+      title: '404',
     },
     component: () => import('@/views/404.vue')
   },
@@ -131,8 +133,8 @@ export const asyncRouterMap = [
     name: 'login',
     component: Login,
     hidden: false,
-    meta:{
-      title:'系统登录',
+    meta: {
+      title: '系统登录',
     },
   },
   {
@@ -140,8 +142,8 @@ export const asyncRouterMap = [
     name: 'password',
     component: Password,
     hidden: false,
-    meta:{
-      title:'找回密码',
+    meta: {
+      title: '找回密码',
     },
   }
 ];
@@ -158,8 +160,33 @@ router.beforeEach((to: any, from: any, next: any) => {
   if (to.path == '/login' || to.path == '/password') {
     next();
   } else {
-    isLogin ? next() : next('/login');
+    if (isLogin) {
+      const decoded: any = jwt_decode(localStorage.tsToken);
+      const {key} = decoded;
+      //权限判断，不能地址栏输入访问
+      if (hasPermission(key, to)) {
+        next();
+      } else {
+        next('/404');
+      }
+    } else {
+      next('/login');
+    }
   }
 });
+
+/*
+* 判断是否有权限
+* @param roles 当前角色
+* @param route 当前路由对象
+* */
+function hasPermission(roles: string, route: any) {
+  if (route.meta && route.meta.roles) {
+    //如果meta.role与当前传进去的角色的key值对上了，那么就有权限查看所有路由，否则无权限
+    return route.meta.roles.some((role: string) => role.indexOf(roles) >= 0);
+  } else {
+    return true;
+  }
+}
 
 export default router;
